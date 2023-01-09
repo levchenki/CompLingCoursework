@@ -1,9 +1,9 @@
 HELP.md
-**/target/
+BloknotParser/**/target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-!**/src/main/**/*.properties
+#!**/src/main/**/*.properties
 
 
 ### IntelliJ IDEA ###
@@ -14,3 +14,6 @@ HELP.md
 
 ### VS Code ###
 .vscode/
+
+### PythonApp ###
+PythonApp/temp

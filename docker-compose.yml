@@ -1,3 +1,4 @@
+# docker-compose down -t;docker-compose up -d --build
 version: "3.8"
 services:
   mongodb:
@@ -5,12 +6,12 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - ./mongodb:/data/db
-      - ./mongodb_config:/data/configdb
+      - ./mongodb_data/db:/data/db
+      - ./mongodb_data/configdb:/data/configdb
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=rootuser
-      - MONGO_INITDB_ROOT_PASSWORD=rootpass
-      - MONGO_INITDB_DATABASE=bloknot-parser
+      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASS}
+      - MONGO_INITDB_DATABASE=${MONGODB_DB}
     restart: always
 
   mongo-express:
@@ -19,13 +20,38 @@ services:
     ports:
       - "8081:8081"
     environment:
-      - ME_CONFIG_MONGODB_ADMINUSERNAME=rootuser
-      - ME_CONFIG_MONGODB_ADMINPASSWORD=rootpass
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=${MONGODB_USER}
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=${MONGODB_PASS}
       - ME_CONFIG_MONGODB_SERVER=mongodb
+    depends_on:
+      - mongodb
 
   parser:
     build: ./BloknotParser/
     ports:
       - "8080:8080"
+    depends_on:
+      - mongodb
+    # environment settings in BloknotParser/src/main/resources/application.properties
+    environment:
+      - MONGODB_HOST=${MONGODB_HOST}
+      - MONGODB_PORT=${MONGODB_PORT}
+      - MONGODB_USER=${MONGODB_USER}
+      - MONGODB_PASS=${MONGODB_PASS}
+      - MONGODB_DB=${MONGODB_DB}
+
+  pythonapp:
+    build: PythonApp
+    restart: always
+    ports:
+      - "8079:5000"
+    environment:
+      - MONGODB_HOST=${MONGODB_HOST}
+      - MONGODB_PORT=${MONGODB_PORT}
+      - MONGODB_USER=${MONGODB_USER}
+      - MONGODB_PASS=${MONGODB_PASS}
+      - MONGODB_DB=${MONGODB_DB}
+    volumes:
+      - ./PythonApp:/app
     depends_on:
       - mongodb
