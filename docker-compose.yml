@@ -3,7 +3,7 @@ services:
   mongodb:
     image: mongo
     ports:
-      - 27017:27017
+      - "27017:27017"
     volumes:
       - ./mongodb:/data/db
       - ./mongodb_config:/data/configdb
@@ -17,7 +17,7 @@ services:
     image: mongo-express
     restart: always
     ports:
-      - 8081:8081
+      - "8081:8081"
     environment:
       - ME_CONFIG_MONGODB_ADMINUSERNAME=rootuser
       - ME_CONFIG_MONGODB_ADMINPASSWORD=rootpass
