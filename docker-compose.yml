@@ -22,3 +22,10 @@ services:
       - ME_CONFIG_MONGODB_ADMINUSERNAME=rootuser
       - ME_CONFIG_MONGODB_ADMINPASSWORD=rootpass
       - ME_CONFIG_MONGODB_SERVER=mongodb
+
+  parser:
+    build: ./BloknotParser/
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongodb
