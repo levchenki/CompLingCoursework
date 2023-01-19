@@ -7,7 +7,7 @@ from datetime import datetime
 from typing import Optional
 from xml.etree import ElementTree
 
-from beanie import Document, Link, init_beanie
+from beanie import Document, Link, init_beanie, Indexed
 from beanie.odm.operators.find.logical import Nor
 from bs4 import BeautifulSoup
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -43,8 +43,8 @@ class NewsSentences(Document):
     link: str
     news_ref: Link[NewsItem]
 
-    sentence: str
-    detected: str
+    detected: Indexed(str)
+    sentence: Indexed(str)
     type: str
     tonality: str
 
@@ -81,7 +81,6 @@ class MongoHelper:
             with open(DirectoriesHelper.tomita_input, 'w') as file:
                 file.writelines(input_file_lines)
             # запускаем Томиту
-            # os.system()
             await (await asyncio.create_subprocess_exec(
                 *DirectoriesHelper.tomita_command().split(' '),
                 stdout=asyncio.subprocess.PIPE,
@@ -96,27 +95,29 @@ class MongoHelper:
                 doc_places: set[str] = set()
                 # Вытаскиваем из документа факты и предложения
                 for fact, lead in zip(document.find('facts'), document.find('Leads')):
-                    try:
-                        soup = BeautifulSoup(lead.attrib.get('text'), 'lxml')
-                        type_ = fact.tag
-                        lemma = soup.find('p').attrs.get('lemma')
-                        sentence = soup.text[21:]
-                        tonality = NLTKHelper.get_tonality(sentence)
-                        # Создаём новую запись с предложением и что в нём нашлось, если дубликат, то игнорируем ошибку
-                        await NewsSentences(
-                            news_ref=chunk[doc_index],
-                            title=chunk[doc_index].title,
-                            link=chunk[doc_index].link,
-                            sentence=sentence,
-                            detected=lemma,
-                            tonality=tonality,
-                            type=type_,
-                        ).insert()
-                        doc_persons.add(lemma) if type_ == 'Person' else doc_places.add(lemma)
-                    except Exception:
-                        pass
+                    soup = BeautifulSoup(lead.attrib.get('text'), 'lxml')
+                    type_ = fact.tag
+                    p_element = soup.find('p')
+                    if p_element is None:
+                        continue
+                    lemma = p_element.attrs.get('lemma')
+                    sentence = soup.text[21:]
+                    # Если запись с такой же сущностью в таком же предложении уже существует, то игнорируем текущую
+                    if await NewsSentences.find_one({NewsSentences.detected: lemma, NewsSentences.sentence: sentence}) is not None:
+                        continue
+                    tonality = NLTKHelper.get_tonality(sentence)
+                    # Создаём новую запись с предложением и что в нём нашлось
+                    await NewsSentences(
+                        news_ref=chunk[doc_index],
+                        title=chunk[doc_index].title,
+                        link=chunk[doc_index].link,
+                        sentence=sentence,
+                        detected=lemma,
+                        tonality=tonality,
+                        type=type_,
+                    ).insert()
+                    doc_persons.add(lemma) if type_ == 'Person' else doc_places.add(lemma)
                 # Записываем в новость все объекты, что в ней нашлись
-                # await chunk[doc_index].set({'persons': , 'places': })
                 chunk[doc_index].persons = ', '.join(doc_persons)
                 chunk[doc_index].places = ', '.join(doc_places)
                 await chunk[doc_index].save()

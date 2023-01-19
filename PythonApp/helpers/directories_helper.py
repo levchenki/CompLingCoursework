@@ -1,4 +1,5 @@
 import os
+import platform
 
 
 class DirectoriesHelper:
@@ -24,7 +25,8 @@ class DirectoriesHelper:
 
     @staticmethod
     def tomita_command() -> str:
-        tomita_binary = os.path.abspath('./tomita_runnable/tomita-parser')
+        tomita_ext = '.exe' if platform.system() == 'Windows' else ''
+        tomita_binary = os.path.abspath(f'./tomita_runnable/tomita-parser{tomita_ext}')
         config_proto = os.path.abspath('./tomita_runnable/config.proto')
         assert os.path.exists(tomita_binary), 'tomita binary not found'
         assert os.path.exists(config_proto), 'tomita config_proto not found'
