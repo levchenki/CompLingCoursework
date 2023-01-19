@@ -18,4 +18,8 @@ public class SentenceService {
 	public Page<Sentence> getAllSentences(Pageable pageable) {
 		return sentenceRepository.findAll(pageable);
 	}
+	
+	public Long getCount() {
+		return sentenceRepository.count();
+	}
 }

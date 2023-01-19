@@ -28,6 +28,11 @@ public class NewsController {
 		return p.getContent();
 	}
 	
+	@GetMapping("/count")
+	public Long getCountNews() {
+		return newsService.getCount();
+	}
+	
 	@PostMapping
 	public void parseNews(
 			@RequestParam(defaultValue = "1") int fromPage,

@@ -166,4 +166,7 @@ public class NewsService {
 		newsRepository.removeNewsByText("");
 	}
 	
+	public Long getCount() {
+		return newsRepository.count();
+	}
 }

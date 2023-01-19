@@ -28,4 +28,9 @@ public class SentencesController {
 		
 		return sentenceService.getAllSentences(pageable).getContent();
 	}
+	
+	@GetMapping("/count")
+	public Long getCountSentences(){
+		return sentenceService.getCount();
+	}
 }
