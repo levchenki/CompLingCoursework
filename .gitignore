@@ -1,11 +1,3 @@
-HELP.md
-BloknotParser/**/target/
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
-#!**/src/main/**/*.properties
-
-
 ### IntelliJ IDEA ###
 .idea
 *.iws
@@ -15,8 +7,23 @@ BloknotParser/**/target/
 ### VS Code ###
 .vscode/
 
+### MongoDB ###
+mongodb_data
+
+### JavaAPP ###
+HELP.md
+BloknotParser/**/target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+#!**/src/main/**/*.properties
+
 ### PythonApp ###
+PythonApp/tomita_runnable/tomita-parser
+PythonApp/tomita_runnable/tomita-parser.exe
+PythonApp/tomita_runnable/libmystem_c_binding.so
 PythonApp/tomita_runnable/input.txt
 PythonApp/tomita_runnable/output.xml
 PythonApp/tomita_runnable/*.bin
+PythonApp/temp
 **/__pycache__
