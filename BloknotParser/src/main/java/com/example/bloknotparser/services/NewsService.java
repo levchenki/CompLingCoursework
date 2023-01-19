@@ -93,14 +93,11 @@ public class NewsService {
 					
 					var savedNews = newsRepository.findByTitle(title);
 					
-					savedNews.ifPresentOrElse((n) -> {
-						n.setCommentsCount(commentsCount);
-						newsRepository.save(n);
-					}, () -> {
+					savedNews.ifPresentOrElse(newsRepository::save, () -> {
 						var stringDate = element.getElementsByClass("botinfo").get(0).text();
 						LocalDateTime date = Parser.StringToDate(stringDate);
 						String text = parseOneNews(href);
-						News news = new News(title, date, href, text, commentsCount);
+						News news = new News(title, date, href, text);
 						newsRepository.save(news);
 					});
 				});
@@ -126,14 +123,13 @@ public class NewsService {
 				var savedNews = newsRepository.findByTitle(title);
 				
 				savedNews.ifPresentOrElse((n) -> {
-					n.setCommentsCount(commentsCount);
 					newsRepository.save(n);
 					System.out.print("u ");
 				}, () -> {
 					var stringDate = el.getElementsByClass("botinfo").get(0).text();
 					LocalDateTime date = Parser.StringToDate(stringDate);
 					String text = parseOneNews(href);
-					News news = new News(title, date, href, text, commentsCount);
+					News news = new News(title, date, href, text);
 					newsRepository.save(news);
 					System.out.print("s ");
 				});

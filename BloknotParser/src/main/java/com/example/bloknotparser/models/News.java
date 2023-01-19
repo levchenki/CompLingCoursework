@@ -4,6 +4,7 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDateTime;
 
@@ -23,13 +24,16 @@ public class News {
 	
 	private String text;
 	
-	private int commentsCount;
+	@Field(name = "persons")
+	private String persons;
 	
-	public News(String title, LocalDateTime date, String link, String text, int commentsCount) {
+	@Field(name = "places")
+	private String places;
+	
+	public News(String title, LocalDateTime date, String link, String text) {
 		this.title = title;
 		this.date = date;
 		this.link = link;
 		this.text = text;
-		this.commentsCount = commentsCount;
 	}
 }
