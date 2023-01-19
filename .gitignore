@@ -16,4 +16,7 @@ BloknotParser/**/target/
 .vscode/
 
 ### PythonApp ###
-PythonApp/temp
+PythonApp/tomita_runnable/input.txt
+PythonApp/tomita_runnable/output.xml
+PythonApp/tomita_runnable/*.bin
+**/__pycache__

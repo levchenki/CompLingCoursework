@@ -27,13 +27,13 @@ class SparkHelper:
             .appName("Word2VecApplication") \
             .getOrCreate()
         # generate model
+        self.regenerate_news_model(is_rewrite=is_rewrite)
+
+    def regenerate_news_model(self, is_rewrite: bool = False):
         if is_rewrite and os.path.exists(self.__model_path):
             shutil.rmtree(self.__model_path, ignore_errors=True)
-        self.__generate_news_model()
-
-    def __generate_news_model(self):
         if not os.path.exists(self.__model_path):
-            self.__logger('model generating...')
+            self.__logger('[MODEL] generating... ~15min')
             # Построчная загрузка файла
             assert os.path.exists(self.__txt_files_dir), f'{self.__txt_files_dir} not exists!'
             # input_file = self.sparkClient.sparkContext.textFile(self.__txt_files_dir)
@@ -61,10 +61,10 @@ class SparkHelper:
             w2v_df = model.transform(filtered)
             w2v_df.show()
             model.save(self.__model_path)
-            self.__logger('model generated')
-        self.__logger('model loading...')
+            self.__logger('[MODEL] generated!')
+        self.__logger('[MODEL] loading... ~5sec')
         self.model: Word2VecModel = Word2VecModel.load(self.__model_path)
-        self.__logger('model loaded')
+        self.__logger('[MODEL] loaded!')
 
     def get_synonyms(self, entry_word: str):
         self.__logger(f'search synonyms for {entry_word}...')

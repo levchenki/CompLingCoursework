@@ -1,0 +1,26 @@
+encoding "utf8";
+
+TTextMinerConfig {
+	Dictionary = "tomita_runnable/dic_2.gzt";
+//	PrettyOutput = "tomita_runnable/pretty.html";
+	
+	Input = {
+		File = "tomita_runnable/input.txt";
+		Type = dpl;
+	}
+
+	Output = {
+		File = "tomita_runnable/output.xml";
+		Format = xml;
+	}
+
+	Articles = [
+		{ Name = "Значимая персона" },
+		{ Name = "Достопримечательность" }
+	]
+
+	Facts = [
+		{ Name = "Person" },
+		{ Name = "Place" }
+	]
+}

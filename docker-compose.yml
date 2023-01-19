@@ -1,4 +1,4 @@
-# docker-compose down -t;docker-compose up -d --build
+# docker-compose down -t 2;docker-compose up -d --build
 version: "3.8"
 services:
   mongodb:
@@ -42,16 +42,22 @@ services:
 
   pythonapp:
     build: PythonApp
-    restart: always
+    #    restart: always
     ports:
-      - "8079:5000"
+      - "8079:8000"
     environment:
       - MONGODB_HOST=${MONGODB_HOST}
       - MONGODB_PORT=${MONGODB_PORT}
       - MONGODB_USER=${MONGODB_USER}
       - MONGODB_PASS=${MONGODB_PASS}
       - MONGODB_DB=${MONGODB_DB}
+      - PYTHONUNBUFFERED=false
     volumes:
       - ./PythonApp:/app
     depends_on:
       - mongodb
+
+#  redis:
+#    image: redis:7-alpine
+#    ports:
+#      - "6379:6379"

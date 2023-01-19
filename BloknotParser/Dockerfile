@@ -1,6 +1,8 @@
 FROM maven:3.8.1-openjdk-17-slim as MAVEN_BUILD
 WORKDIR /app-build
-COPY . .
+ADD pom.xml .
+RUN mvn verify clean --fail-never
+ADD . .
 RUN mvn clean package
 
 FROM openjdk:17-slim
