@@ -1,6 +1,7 @@
 import asyncio
 
 import uvicorn
+from bson import ObjectId
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -12,7 +13,7 @@ from helpers.spark_helper import SparkHelper
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    # allow_origins=['http://0.0.0.0:5000'],
+    allow_origins=['*'],
     allow_credentials=True,
     allow_methods=['*'],
     allow_headers=['*'],
@@ -47,6 +48,12 @@ async def get_tomita(page: int = 1, count: int = 20):
         'total': await NewsSentences.find().count(),
         'sentences': (await NewsSentences.find().to_list())[offset:offset + count],
     }
+
+
+@app.get('/news-tonalities')
+async def get_news_tonalities(news_id: str):
+    # return await NewsSentences.find({NewsSentences.link: news_link}).to_list()
+    return await NewsSentences.find({NewsSentences.news_ref.id: ObjectId(news_id)}).to_list()
 
 
 @app.get('/tonality')

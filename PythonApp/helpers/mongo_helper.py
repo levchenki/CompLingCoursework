@@ -31,7 +31,6 @@ class NewsItem(Document):
     persons: Optional[str]
 
     _class: str
-    commentsCount: int
     date: datetime
 
 
@@ -42,11 +41,14 @@ class NewsSentences(Document):
     title: str
     link: str
     news_ref: Link[NewsItem]
+    # news_ref_id: str
 
     detected: Indexed(str)
     sentence: Indexed(str)
     type: str
     tonality: str
+    start_index: int
+    len: int
 
 
 class MongoHelper:
@@ -105,6 +107,8 @@ class MongoHelper:
                     # Если запись с такой же сущностью в таком же предложении уже существует, то игнорируем текущую
                     if await NewsSentences.find_one({NewsSentences.detected: lemma, NewsSentences.sentence: sentence}) is not None:
                         continue
+                    start_index_ = int(lead.attrib.get('pos'))
+                    len_ = int(lead.attrib.get('len'))
                     tonality = NLTKHelper.get_tonality(sentence)
                     # Создаём новую запись с предложением и что в нём нашлось
                     await NewsSentences(
@@ -115,6 +119,8 @@ class MongoHelper:
                         detected=lemma,
                         tonality=tonality,
                         type=type_,
+                        start_index=start_index_,
+                        len=len_
                     ).insert()
                     doc_persons.add(lemma) if type_ == 'Person' else doc_places.add(lemma)
                 # Записываем в новость все объекты, что в ней нашлись

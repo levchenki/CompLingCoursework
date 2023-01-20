@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin      : 0;
+  padding     : 0;
+  font-family : Roboto, sans-serif;
+}
+
+h2 {
+  @apply text-4xl font-bold text-center
+}
+
+input:focus {
+  outline : none;
+}

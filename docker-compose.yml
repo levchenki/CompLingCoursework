@@ -1,35 +1,23 @@
 # docker-compose down -t 2;docker-compose up -d --build
 version: "3.8"
 services:
-  mongodb:
-    image: mongo
+  client:
+    build: ./client
     ports:
-      - "27017:27017"
-    volumes:
-      - ./mongodb_data/db:/data/db
-      - ./mongodb_data/configdb:/data/configdb
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_USER}
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASS}
-      - MONGO_INITDB_DATABASE=${MONGODB_DB}
-    restart: always
-
-  mongo-express:
-    image: mongo-express
-    restart: always
-    ports:
-      - "8081:8081"
-    environment:
-      - ME_CONFIG_MONGODB_ADMINUSERNAME=${MONGODB_USER}
-      - ME_CONFIG_MONGODB_ADMINPASSWORD=${MONGODB_PASS}
-      - ME_CONFIG_MONGODB_SERVER=mongodb
+      - "3000:80"
     depends_on:
-      - mongodb
+      - parser
+      - pythonapp
+    environment:
+      - VITE_JAVA_HOST=${JAVA_APP_HOST}
+      - VITE_JAVA_PORT=${JAVA_APP_PORT}
+      - VITE_PYTHON_HOST=${PYTHON_APP_HOST}
+      - VITE_PYTHON_PORT=${PYTHON_APP_PORT}
 
   parser:
     build: ./BloknotParser/
     ports:
-      - "8080:8080"
+      - "${JAVA_APP_PORT}:8080"
     depends_on:
       - mongodb
     # environment settings in BloknotParser/src/main/resources/application.properties
@@ -44,7 +32,7 @@ services:
     build: PythonApp
     #    restart: always
     ports:
-      - "8079:8000"
+      - "${PYTHON_APP_PORT}:8000"
     environment:
       - MONGODB_HOST=${MONGODB_HOST}
       - MONGODB_PORT=${MONGODB_PORT}
@@ -56,6 +44,31 @@ services:
       - ./PythonApp:/app
     depends_on:
       - mongodb
+
+  mongodb:
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./mongodb_data/db:/data/db
+      - ./mongodb_data/configdb:/data/configdb
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASS}
+      - MONGO_INITDB_DATABASE=${MONGODB_DB}
+    restart: always
+
+#  mongo-express:
+#    image: mongo-express
+#    restart: always
+#    ports:
+#      - "8081:8081"
+#    environment:
+#      - ME_CONFIG_MONGODB_ADMINUSERNAME=${MONGODB_USER}
+#      - ME_CONFIG_MONGODB_ADMINPASSWORD=${MONGODB_PASS}
+#      - ME_CONFIG_MONGODB_SERVER=mongodb
+#    depends_on:
+#      - mongodb
 
 #  redis:
 #    image: redis:7-alpine
