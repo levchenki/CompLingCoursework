@@ -21,7 +21,7 @@ class NLTKHelper:
     @staticmethod
     async def init(name: str, is_rewrite=False):
         NLTKHelper.__model_path = DirectoriesHelper.temp_dir('models', file_name=f'{name}.pickle')
-        NLTKHelper.__words_freq_path = DirectoriesHelper.temp_dir('models', file_name=f'{name}.freq.txt')
+        NLTKHelper.__words_freq_path = DirectoriesHelper.temp_dir('models', file_name=f'{name}.freq.pickle')
         await NLTKHelper.regenerate_model(is_rewrite=is_rewrite)
 
     @staticmethod
